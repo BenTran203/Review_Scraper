@@ -13,6 +13,7 @@ import json
 import logging
 import signal
 import sys
+import time
 
 import pika
 
@@ -133,8 +134,20 @@ def main() -> None:
         sys.exit(1)
     logger.info("Connected to Redis")
 
-    # Connect to RabbitMQ
-    connection = pika.BlockingConnection(pika.URLParameters(config.RABBITMQ_URL))
+    # Connect to RabbitMQ with retry
+    connection = None
+    for attempt in range(1, 11):
+        try:
+            connection = pika.BlockingConnection(pika.URLParameters(config.RABBITMQ_URL))
+            break
+        except pika.exceptions.AMQPConnectionError:
+            logger.warning("RabbitMQ not ready, retrying in %ds... (attempt %d/10)", attempt, attempt)
+            time.sleep(attempt)  # linear back-off: 1s, 2s, 3s, ...
+
+    if connection is None:
+        logger.error("Cannot connect to RabbitMQ at %s after 10 attempts", config.RABBITMQ_URL)
+        sys.exit(1)
+
     channel = connection.channel()
     channel.queue_declare(queue=config.SCRAPE_JOBS_QUEUE, durable=True)
     channel.queue_declare(queue=config.SCRAPE_RESULTS_QUEUE, durable=True)
