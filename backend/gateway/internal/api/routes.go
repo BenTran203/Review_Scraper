@@ -11,10 +11,10 @@ func SetupRoutes(
 	r *gin.Engine,
 	sessions *services.SessionService,
 	queue *services.QueueService,
-	openaiSvc *services.OpenAIService,
+	claudeSvc *services.ClaudeService,
 	redisSvc *services.RedisClient,
 ) {
-	handler := NewHandler(sessions, queue, openaiSvc)
+	handler := NewHandler(sessions, queue, claudeSvc)
 
 	r.Use(middleware.CORS())
 

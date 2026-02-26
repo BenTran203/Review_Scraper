@@ -14,16 +14,16 @@ import (
 type Handler struct {
 	sessions *services.SessionService
 	queue    *services.QueueService
-	openai   *services.OpenAIService
+	claude   *services.ClaudeService
 }
 
 // NewHandler creates a Handler with all required services.
 func NewHandler(
 	sessions *services.SessionService,
 	queue *services.QueueService,
-	openai *services.OpenAIService,
+	claude *services.ClaudeService,
 ) *Handler {
-	return &Handler{sessions: sessions, queue: queue, openai: openai}
+	return &Handler{sessions: sessions, queue: queue, claude: claude}
 }
 
 // HealthCheck returns 200 if the gateway and its dependencies are healthy.

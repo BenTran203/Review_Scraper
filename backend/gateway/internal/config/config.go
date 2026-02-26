@@ -1,7 +1,7 @@
 package config
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"strconv"
 
@@ -13,19 +13,19 @@ type Config struct {
 	GinMode       string
 	RedisURL      string
 	RedisPassword string
-	RabbitMQURL   string
-	OpenAIKey     string
-	SessionTTLHrs int
+	RabbitMQURL    string
+	AnthropicKey   string
+	SessionTTLHrs  int
 	MaxReviews    int
 }
 
-func Load() *Config {
+func Load() (*Config, error) {
 	// Load .env
 	_ = godotenv.Load()
 
-	apiKey := os.Getenv("OPENAI_API_KEY")
-	if apiKey == "" || apiKey == "your_openai_api_key_here" {
-		log.Fatal("FATAL: OPENAI_API_KEY is not set. Set it via environment variable (Railway dashboard in production).")
+	apiKey := os.Getenv("ANTHROPIC_API_KEY")
+	if apiKey == "" {
+		return nil, fmt.Errorf("ANTHROPIC_API_KEY is not set in .env file")
 	}
 
 	ttl, _ := strconv.Atoi(getEnv("SESSION_TTL_HOURS", "1"))
@@ -37,10 +37,10 @@ func Load() *Config {
 		RedisURL:      getEnv("REDIS_URL", "redis://localhost:6379"),
 		RedisPassword: os.Getenv("REDIS_PASSWORD"),
 		RabbitMQURL:   getEnv("RABBITMQ_URL", "amqp://guest:guest@localhost:5672/"),
-		OpenAIKey:     apiKey,
+		AnthropicKey:  apiKey,
 		SessionTTLHrs: ttl,
 		MaxReviews:    maxReviews,
-	}
+	}, nil
 }
 
 func getEnv(key, fallback string) string {

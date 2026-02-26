@@ -15,7 +15,10 @@ import (
 )
 
 func main() {
-	cfg := config.Load()
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
 
 	// --- Redis ---
 	redisSvc, err := services.NewRedisClient(cfg.RedisURL, cfg.RedisPassword, cfg.SessionTTLHrs)
@@ -35,7 +38,7 @@ func main() {
 
 	// --- Services ---
 	sessionSvc := services.NewSessionService(redisSvc)
-	openaiSvc := services.NewOpenAIService(cfg.OpenAIKey)
+	claudeSvc := services.NewClaudeService(cfg.AnthropicKey)
 
 	// --- Background worker: consume scrape results ---
 	ctx, cancel := context.WithCancel(context.Background())
@@ -46,12 +49,12 @@ func main() {
 		log.Fatalf("Failed to start scrape result consumer: %v", err)
 	}
 
-	go processScrapeResults(ctx, results, sessionSvc, openaiSvc)
+	go processScrapeResults(ctx, results, sessionSvc, claudeSvc)
 
 	// --- HTTP Server ---
 	gin.SetMode(cfg.GinMode)
 	router := gin.Default()
-	api.SetupRoutes(router, sessionSvc, queueSvc, openaiSvc, redisSvc)
+	api.SetupRoutes(router, sessionSvc, queueSvc, claudeSvc, redisSvc)
 
 	go func() {
 		addr := ":" + cfg.Port
@@ -69,13 +72,13 @@ func main() {
 	cancel()
 }
 
-// processScrapeResults listens for completed scrape jobs, runs OpenAI analysis,
+// processScrapeResults listens for completed scrape jobs, runs Claude analysis,
 // and stores the results in Redis.
 func processScrapeResults(
 	ctx context.Context,
 	results <-chan models.ScrapeResult,
 	sessions *services.SessionService,
-	openai *services.OpenAIService,
+	claude *services.ClaudeService,
 ) {
 	for {
 		select {
@@ -85,7 +88,7 @@ func processScrapeResults(
 			if !ok {
 				return
 			}
-			handleScrapeResult(ctx, result, sessions, openai)
+			handleScrapeResult(ctx, result, sessions, claude)
 		}
 	}
 }
@@ -94,7 +97,7 @@ func handleScrapeResult(
 	ctx context.Context,
 	result models.ScrapeResult,
 	sessions *services.SessionService,
-	openai *services.OpenAIService,
+	claude *services.ClaudeService,
 ) {
 	token := result.Token
 
@@ -129,10 +132,10 @@ func handleScrapeResult(
 		return
 	}
 
-	// Run OpenAI analysis
-	analysis, err := openai.AnalyzeReviews(ctx, result.Reviews, session.OutputLanguage)
+	// Run Claude analysis
+	analysis, err := claude.AnalyzeReviews(ctx, result.Reviews, session.OutputLanguage)
 	if err != nil {
-		log.Printf("[worker] openai error for %s: %v", token, err)
+		log.Printf("[worker] claude error for %s: %v", token, err)
 		sessions.SetError(ctx, token, "AI analysis failed")
 		return
 	}

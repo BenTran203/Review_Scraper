@@ -64,7 +64,7 @@ type ProgressEvent struct {
 	Message string `json:"message,omitempty"`
 }
 
-// SupportedLanguages maps language codes to full names for OpenAI prompts.
+// SupportedLanguages maps language codes to full names for AI prompts.
 var SupportedLanguages = map[string]string{
 	"en": "English",
 	"vi": "Vietnamese",
