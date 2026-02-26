@@ -13,8 +13,8 @@ analysis — in English, Vietnamese, Spanish, or Japanese.
 | Frontend         | Next.js 15, React 19, Tailwind CSS v4, Recharts |
 | API Gateway      | Go (Gin), Redis, RabbitMQ                       |
 | Scraper Workers  | Python (Playwright, httpx, Beautiful Soup 4)    |
-| AI               | OpenAI GPT-4o-mini (server-side only)           |
-| Queue            | RabbitMQ / CloudAMQP                            |
+| AI               | Claude (server-side only)                       |
+| Queue            | RabbitMQ                                       |
 | Cache / Sessions | Redis 7                                         |
 | Hosting          | Vercel (frontend), Railway (backend)            |
 
