@@ -4,17 +4,19 @@ Paste a product URL from Amazon, Shopee, eBay, Lazada, or Tiki and get an
 AI-generated summary of customer reviews including pros, cons, and sentiment
 analysis — in English, Vietnamese, Spanish, or Japanese.
 
+(Currently the Scraping method only works for Amazon and Lazada, other E_commerce are much more tougher to scrape the review with their 0 bot policy)
+
 ## Architecture
 
-| Layer | Tech |
-|-------|------|
-| Frontend | Next.js 15, React 19, Tailwind CSS v4, Recharts |
-| API Gateway | Go (Gin), Redis, RabbitMQ |
-| Scraper Workers | Python (Playwright, httpx, Beautiful Soup 4) |
-| AI | OpenAI GPT-4o-mini (server-side only) |
-| Queue | RabbitMQ / CloudAMQP |
-| Cache / Sessions | Redis 7 |
-| Hosting | Vercel (frontend), Railway (backend) |
+| Layer            | Tech                                            |
+| ---------------- | ----------------------------------------------- |
+| Frontend         | Next.js 15, React 19, Tailwind CSS v4, Recharts |
+| API Gateway      | Go (Gin), Redis, RabbitMQ                       |
+| Scraper Workers  | Python (Playwright, httpx, Beautiful Soup 4)    |
+| AI               | OpenAI GPT-4o-mini (server-side only)           |
+| Queue            | RabbitMQ / CloudAMQP                            |
+| Cache / Sessions | Redis 7                                         |
+| Hosting          | Vercel (frontend), Railway (backend)            |
 
 ## Quick Start (local development)
 
@@ -66,7 +68,7 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:3000>.
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Environment Variables
 

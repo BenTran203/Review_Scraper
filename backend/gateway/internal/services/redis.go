@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -18,16 +17,20 @@ type RedisClient struct {
 
 // NewRedisClient creates a connected Redis client.
 func NewRedisClient(redisURL string, password string, ttlHours int) (*RedisClient, error) {
-	// Parse redis:// URL
-	addr := strings.TrimPrefix(redisURL, "redis://")
-	if addr == "" {
-		addr = "localhost:6379"
-	}
+	var opts *redis.Options
 
-	opts := &redis.Options{
-		Addr:     addr,
-		Password: password,
-		DB:       0,
+	if redisURL != "" {
+		var err error
+		opts, err = redis.ParseURL(redisURL)
+		if err != nil {
+			return nil, fmt.Errorf("invalid redis URL: %w", err)
+		}
+	} else {
+		opts = &redis.Options{
+			Addr:     "localhost:6379",
+			Password: password,
+			DB:       0,
+		}
 	}
 
 	client := redis.NewClient(opts)
