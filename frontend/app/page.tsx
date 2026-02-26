@@ -114,6 +114,8 @@ export default function HomePage() {
         ReviewPulse AI respects robots.txt, rate-limits requests, and strips
         personally identifiable information. Results are for informational
         purposes only and may not reflect all customer opinions.
+        <br />
+        Side note: Only Amazon and Lazada is available for scraping, other e-commerece still not available due to heavily restriction on bot scraping
       </p>
     </main>
   );
