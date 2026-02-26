@@ -28,7 +28,14 @@ class EbayScraper(IReviewScraper):
         review_url = self._build_review_url(url)
 
         async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
+            browser = await p.chromium.launch(
+                headless=True,
+                args=[
+                    "--disable-blink-features=AutomationControlled",
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
+                ],
+            )
             context = await browser.new_context(
                 user_agent="ReviewPulseBot/1.0 (educational project; respects robots.txt)"
             )

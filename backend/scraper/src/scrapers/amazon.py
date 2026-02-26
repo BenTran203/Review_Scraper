@@ -68,6 +68,7 @@ class AmazonScraper(IReviewScraper):
                 args=[
                     "--disable-blink-features=AutomationControlled",
                     "--no-sandbox",
+                    "--disable-dev-shm-usage",
                 ],
             )
             context = await browser.new_context(
