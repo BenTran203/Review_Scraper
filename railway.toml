@@ -1,0 +1,11 @@
+# Railway deployment configuration
+# Each service (gateway, scraper) should be deployed as a separate Railway service.
+# Configure via Railway dashboard:
+#   - Gateway: root directory = backend/gateway, set OPENAI_API_KEY env var
+#   - Scraper: root directory = backend/scraper
+#   - Redis: add Railway managed Redis plugin
+#   - RabbitMQ: use CloudAMQP add-on or external CloudAMQP instance
+
+[build]
+# This file is for reference. Railway auto-detects Dockerfiles.
+# Set the root directory per-service in the Railway dashboard.

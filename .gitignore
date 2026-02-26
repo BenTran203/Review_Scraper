@@ -1,0 +1,46 @@
+# Environment files - NEVER commit secrets
+.env
+.env.local
+.env.*.local
+*.key
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Build outputs
+.next/
+out/
+dist/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbbs.db
+
+# Docker
+*.log
+
+# Go
+/backend/gateway/server
+/backend/gateway/tmp/
+
+# Python
+*.egg-info/
+.pytest_cache/
+htmlcov/
+
+# Redis dump
+dump.rdb
